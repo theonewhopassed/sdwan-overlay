@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::time::Instant;
+use chrono::{DateTime, Utc};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LinkMetrics {
@@ -7,7 +7,7 @@ pub struct LinkMetrics {
     pub jitter_ms: f64,
     pub packet_loss: f64,
     pub bandwidth_mbps: f64,
-    pub timestamp: Instant,
+    pub timestamp: DateTime<Utc>,
 }
 
 impl LinkMetrics {
@@ -17,7 +17,7 @@ impl LinkMetrics {
             jitter_ms: 0.0,
             packet_loss: 0.0,
             bandwidth_mbps: 0.0,
-            timestamp: Instant::now(),
+            timestamp: Utc::now(),
         }
     }
     
@@ -37,14 +37,14 @@ impl LinkMetrics {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MetricsSnapshot {
     pub link_metrics: std::collections::HashMap<String, LinkMetrics>,
-    pub timestamp: Instant,
+    pub timestamp: DateTime<Utc>,
 }
 
 impl MetricsSnapshot {
     pub fn new() -> Self {
         Self {
             link_metrics: std::collections::HashMap::new(),
-            timestamp: Instant::now(),
+            timestamp: Utc::now(),
         }
     }
 }
