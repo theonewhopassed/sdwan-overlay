@@ -88,7 +88,7 @@ A fully customizable, per-packet bonded SD-WAN overlay system built for Ubuntu S
 ```bash
 # Clone the repository
 git clone https://github.com/theonewhopassed/sdwan-overlay.git
-cd speedfusion-like
+cd sdwan-overlay
 
 # Setup environment
 ./scripts/setup.sh
