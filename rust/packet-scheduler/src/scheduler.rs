@@ -90,7 +90,7 @@ impl PacketScheduler {
         underlay_endpoint: String,
     ) -> Result<Self> {
         let (metrics_sender, metrics_receiver) = bounded(100);
-        let (packet_sender, packet_receiver) = bounded(config.scheduler.max_queue_size);
+        let (packet_sender, _packet_receiver) = bounded(config.scheduler.max_queue_size);
         
         // Initialize QoS rules
         let qos_rules = Arc::new(DashMap::new());
@@ -118,7 +118,7 @@ impl PacketScheduler {
     }
     
     async fn start_metrics_collection(
-        endpoint: String,
+        _endpoint: String,
         sender: Sender<HashMap<String, LinkMetrics>>,
     ) -> Result<()> {
         // TODO: Implement gRPC client to underlay manager
@@ -190,7 +190,7 @@ impl PacketScheduler {
         };
         
         // Apply QoS rules
-        let qos_rule = self.apply_qos_rules(&packet);
+        let _qos_rule = self.apply_qos_rules(&packet);
         
         // Select link
         let link_name = self.link_selector.select_link(&packet, metrics).await?;
