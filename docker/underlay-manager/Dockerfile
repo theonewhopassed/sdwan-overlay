@@ -19,20 +19,18 @@ RUN rm -rf src
 # Copy source code
 COPY rust/underlay-manager/src ./src
 
-# Build the application with static linking
-RUN cargo build --release --target x86_64-unknown-linux-gnu
+# Build the application with static linking for better compatibility
+RUN cargo build --release --target x86_64-unknown-linux-musl
 
 # Final stage
-FROM debian:bullseye-slim
+FROM alpine:latest
 
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 
 # Copy the binary from builder stage
-COPY --from=builder /app/target/x86_64-unknown-linux-gnu/release/underlay-manager .
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/underlay-manager .
 
 # Copy configuration files
 COPY config/underlay-manager ./config

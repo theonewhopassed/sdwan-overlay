@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <chrono>
+#include <thread>
 
 int main(int argc, char* argv[]) {
     std::cout << "SD-WAN FEC Engine v0.1.0" << std::endl;
@@ -10,6 +11,7 @@ int main(int argc, char* argv[]) {
     // Parse command line arguments
     bool test_mode = false;
     bool benchmark_mode = false;
+    bool daemon_mode = false;
     
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -17,14 +19,38 @@ int main(int argc, char* argv[]) {
             test_mode = true;
         } else if (arg == "--benchmark") {
             benchmark_mode = true;
+        } else if (arg == "--daemon") {
+            daemon_mode = true;
         } else if (arg == "--help" || arg == "-h") {
             std::cout << "Usage: " << argv[0] << " [OPTIONS]" << std::endl;
             std::cout << "Options:" << std::endl;
             std::cout << "  --test       Run unit tests" << std::endl;
             std::cout << "  --benchmark  Run performance benchmarks" << std::endl;
+            std::cout << "  --daemon     Run in daemon mode" << std::endl;
             std::cout << "  --help, -h   Show this help message" << std::endl;
             return 0;
         }
+    }
+    
+    if (daemon_mode) {
+        std::cout << "FEC Engine starting in daemon mode..." << std::endl;
+        
+        // Initialize FEC engine
+        sdwan::FecConfig config;
+        config.type = sdwan::FecType::REED_SOLOMON;
+        config.data_shards = 4;
+        config.parity_shards = 2;
+        
+        sdwan::FecEngine engine(config);
+        
+        std::cout << "FEC Engine daemon started successfully" << std::endl;
+        
+        // Keep the daemon running
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+        
+        return 0;
     }
     
     if (test_mode) {
