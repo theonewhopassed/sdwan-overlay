@@ -10,6 +10,9 @@ RUN go mod download
 COPY cmd/controller ./cmd/controller
 COPY cmd/controller/internal ./cmd/controller/internal
 
+# Update go.mod and download dependencies
+RUN go mod tidy && go mod download
+
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o controller ./cmd/controller
 
