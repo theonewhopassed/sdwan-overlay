@@ -1,4 +1,4 @@
-use crate::config::{QosRule, MatchCriteria, QosAction};
+use crate::config::QosRule;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

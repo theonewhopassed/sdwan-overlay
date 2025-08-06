@@ -6,5 +6,5 @@ pub mod proto;
 
 pub use config::Config;
 pub use scheduler::PacketScheduler;
-pub use qos::QosRule;
+pub use config::QosRule;
 pub use metrics::LinkMetrics; 

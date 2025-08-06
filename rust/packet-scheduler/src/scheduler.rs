@@ -6,8 +6,9 @@ use dashmap::DashMap;
 use parking_lot::RwLock;
 use std::collections::HashMap;
 use std::sync::Arc;
-use tokio::time::{Duration, Instant};
-use tracing::{debug, error, info, warn};
+use tokio::time::Duration;
+use chrono::{DateTime, Utc};
+use tracing::{debug, error, info};
 
 pub struct Packet {
     pub id: u64,
@@ -16,7 +17,7 @@ pub struct Packet {
     pub source_ip: String,
     pub dest_ip: String,
     pub protocol: String,
-    pub timestamp: Instant,
+    pub timestamp: DateTime<Utc>,
 }
 
 pub struct ScheduledPacket {
@@ -130,14 +131,14 @@ impl PacketScheduler {
                     jitter_ms: 2.0,
                     packet_loss: 0.001,
                     bandwidth_mbps: 100.0,
-                    timestamp: Instant::now(),
+                    timestamp: Utc::now(),
                 });
                 metrics.insert("eth1".to_string(), LinkMetrics {
                     latency_ms: 15.0,
                     jitter_ms: 3.0,
                     packet_loss: 0.002,
                     bandwidth_mbps: 50.0,
-                    timestamp: Instant::now(),
+                    timestamp: Utc::now(),
                 });
                 
                 if let Err(e) = sender.send(metrics) {
@@ -185,7 +186,7 @@ impl PacketScheduler {
             source_ip: "192.168.1.100".to_string(),
             dest_ip: "192.168.1.200".to_string(),
             protocol: "TCP".to_string(),
-            timestamp: Instant::now(),
+            timestamp: Utc::now(),
         };
         
         // Apply QoS rules
