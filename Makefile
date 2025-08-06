@@ -26,7 +26,11 @@ build-go:
 # Build Python components
 build-python:
 	@echo "Building Python components..."
-	pip install -e python/device-agent
+	@echo "Skipping Python build due to externally managed environment"
+	@echo "To build Python components, create a virtual environment:"
+	@echo "  python3 -m venv venv"
+	@echo "  source venv/bin/activate"
+	@echo "  pip install -e python/device-agent"
 
 # Build Docker images
 build-docker:
