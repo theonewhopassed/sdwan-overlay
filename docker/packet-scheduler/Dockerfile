@@ -2,11 +2,12 @@ FROM rust:1.75-slim AS builder
 
 WORKDIR /app
 
-# Install build dependencies
+# Install build dependencies and musl target
 RUN apt-get update && apt-get install -y \
     pkg-config \
     libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && rustup target add x86_64-unknown-linux-musl
 
 # Copy Cargo files
 COPY rust/packet-scheduler/Cargo.toml ./Cargo.toml
