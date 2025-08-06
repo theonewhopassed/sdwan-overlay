@@ -1,9 +1,11 @@
-FROM gcc:12-slim AS builder
+FROM debian:bullseye-slim AS builder
 
 WORKDIR /app
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
     make \
     cmake \
     libssl-dev \
