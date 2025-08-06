@@ -1,7 +1,11 @@
 from setuptools import setup, find_packages
 
-with open("README.md", "r", encoding="utf-8") as fh:
-    long_description = fh.read()
+# Read README if available, otherwise use a default description
+try:
+    with open("README.md", "r", encoding="utf-8") as fh:
+        long_description = fh.read()
+except FileNotFoundError:
+    long_description = "SD-WAN Device Agent for configuration management and telemetry"
 
 setup(
     name="sdwan-device-agent",
