@@ -1,13 +1,10 @@
 use crate::{Config, LinkMetrics};
 use anyhow::Result;
-use async_trait::async_trait;
 use std::collections::HashMap;
-use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::time::Duration;
-use chrono::{DateTime, Utc};
-use tokio::net::UdpSocket;
-use tokio::time::timeout;
-use tracing::{debug, error, info, warn};
+use chrono::Utc;
+use tokio::time::Instant;
+use tracing::{debug, error, info};
 
 pub struct NetworkProbe {
     config: Config,
