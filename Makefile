@@ -105,6 +105,24 @@ build-linux-arm64:
 	@echo "Building for Linux ARM64..."
 	VERSION=1.0.0 PLATFORMS="linux-arm64" ./scripts/build-release.sh
 
+# Create release
+release:
+	@echo "Creating release..."
+	./scripts/create-release.sh $(ARGS)
+
+# Create specific release
+release-patch:
+	@echo "Creating patch release..."
+	./scripts/create-release.sh --type patch
+
+release-minor:
+	@echo "Creating minor release..."
+	./scripts/create-release.sh --type minor
+
+release-major:
+	@echo "Creating major release..."
+	./scripts/create-release.sh --type major
+
 # Deploy complete cluster
 deploy-cluster:
 	@echo "Deploying complete SD-WAN cluster..."
@@ -216,6 +234,10 @@ help:
 	@echo "  build-release   - Build all release packages"
 	@echo "  build-linux-amd64 - Build for Linux AMD64"
 	@echo "  build-linux-arm64 - Build for Linux ARM64"
+	@echo "  release         - Create GitHub release"
+	@echo "  release-patch   - Create patch release"
+	@echo "  release-minor   - Create minor release"
+	@echo "  release-major   - Create major release"
 	@echo ""
 	@echo "Cluster Management:"
 	@echo "  cluster-status  - Show cluster status"

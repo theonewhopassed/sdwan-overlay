@@ -1,0 +1,122 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: x86_64-unknown-linux-gnu
+        override: true
+        
+    - name: Setup Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+        
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          docker.io \
+          docker-compose \
+          libssl-dev \
+          pkg-config
+          
+    - name: Start Docker
+      run: |
+        sudo systemctl start docker
+        sudo usermod -a -G docker $USER
+        
+    - name: Build release packages
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/} ./scripts/build-release.sh
+        
+    - name: Create release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist/*.tar.gz
+          dist/SHA256SUMS
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-packages
+        path: dist/
+        retention-days: 30
+
+  build-docker:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+    - name: Build and push Docker images
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        docker-compose build
+        
+        # Tag and push images
+        docker tag sdwan-controller:latest theonewhopassed/sdwan-controller:$VERSION
+        docker tag sdwan-controller:latest theonewhopassed/sdwan-controller:latest
+        docker push theonewhopassed/sdwan-controller:$VERSION
+        docker push theonewhopassed/sdwan-controller:latest
+        
+        docker tag sdwan-underlay-manager:latest theonewhopassed/sdwan-underlay-manager:$VERSION
+        docker tag sdwan-underlay-manager:latest theonewhopassed/sdwan-underlay-manager:latest
+        docker push theonewhopassed/sdwan-underlay-manager:$VERSION
+        docker push theonewhopassed/sdwan-underlay-manager:latest
+        
+        docker tag sdwan-packet-scheduler:latest theonewhopassed/sdwan-packet-scheduler:$VERSION
+        docker tag sdwan-packet-scheduler:latest theonewhopassed/sdwan-packet-scheduler:latest
+        docker push theonewhopassed/sdwan-packet-scheduler:$VERSION
+        docker push theonewhopassed/sdwan-packet-scheduler:latest
+        
+        docker tag sdwan-fec-engine:latest theonewhopassed/sdwan-fec-engine:$VERSION
+        docker tag sdwan-fec-engine:latest theonewhopassed/sdwan-fec-engine:latest
+        docker push theonewhopassed/sdwan-fec-engine:$VERSION
+        docker push theonewhopassed/sdwan-fec-engine:latest
+        
+        docker tag sdwan-reassembly-engine:latest theonewhopassed/sdwan-reassembly-engine:$VERSION
+        docker tag sdwan-reassembly-engine:latest theonewhopassed/sdwan-reassembly-engine:latest
+        docker push theonewhopassed/sdwan-reassembly-engine:$VERSION
+        docker push theonewhopassed/sdwan-reassembly-engine:latest
+        
+        docker tag sdwan-device-agent:latest theonewhopassed/sdwan-device-agent:$VERSION
+        docker tag sdwan-device-agent:latest theonewhopassed/sdwan-device-agent:latest
+        docker push theonewhopassed/sdwan-device-agent:$VERSION
+        docker push theonewhopassed/sdwan-device-agent:latest
+
