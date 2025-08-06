@@ -3,7 +3,7 @@ use anyhow::Result;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use tonic::{Request, Response, Status};
+
 use tracing::{debug, error, info};
 
 pub struct UnderlayManagerServer {
@@ -25,7 +25,7 @@ impl UnderlayManagerServer {
     }
 
     pub async fn start(&self, addr: String) -> Result<()> {
-        info!("Starting Underlay Manager server on {}", addr);
+        info!("Starting Underlay Manager server on {} with {} interfaces", addr, self.config.interfaces.len());
         
         // Start metrics collection in background
         let probe = self.probe.clone();

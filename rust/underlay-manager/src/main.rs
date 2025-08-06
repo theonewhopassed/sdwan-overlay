@@ -35,11 +35,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Loaded configuration from {}", args.config);
 
     // Create and start the gRPC server
-    let server = UnderlayManagerServer::new(config).await?;
+    let server = UnderlayManagerServer::new(config);
     info!("Underlay manager server initialized on port {}", args.port);
 
     // Start the server
-    if let Err(e) = server.run(args.port).await {
+    if let Err(e) = server.start(format!("0.0.0.0:{}", args.port)).await {
         error!("Server error: {}", e);
         return Err(e.into());
     }
