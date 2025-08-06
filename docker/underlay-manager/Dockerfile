@@ -1,6 +1,12 @@
-FROM rust:1.75-alpine AS builder
+FROM rust:1.75-slim AS builder
 
 WORKDIR /app
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy Cargo files
 COPY rust/underlay-manager/Cargo.toml ./Cargo.toml
@@ -17,9 +23,11 @@ COPY rust/underlay-manager/src ./src
 RUN cargo build --release
 
 # Final stage
-FROM alpine:latest
+FROM debian:bullseye-slim
 
-RUN apk --no-cache add ca-certificates
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root/
 
