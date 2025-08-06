@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sdwan/controller/internal/config"
-	"github.com/sdwan/controller/internal/store"
+	"github.com/sdwan/speedfusion-like/cmd/controller/internal/config"
+	"github.com/sdwan/speedfusion-like/cmd/controller/internal/store"
 )
 
 // Server represents the HTTP server

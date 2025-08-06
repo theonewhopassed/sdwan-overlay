@@ -11,9 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/sdwan/controller/internal/config"
-	"github.com/sdwan/controller/internal/server"
-	"github.com/sdwan/controller/internal/store"
+	"github.com/sdwan/speedfusion-like/cmd/controller/internal/config"
+	"github.com/sdwan/speedfusion-like/cmd/controller/internal/server"
+	"github.com/sdwan/speedfusion-like/cmd/controller/internal/store"
 	"go.etcd.io/etcd/client/v3"
 )
 
