@@ -91,6 +91,20 @@ deploy-bulk:
 	@echo "Deploying multiple edge devices..."
 	./scripts/deploy-bulk.sh config/edges.yml
 
+# Build release packages
+build-release:
+	@echo "Building release packages..."
+	VERSION=1.0.0 ./scripts/build-release.sh
+
+# Build specific platform
+build-linux-amd64:
+	@echo "Building for Linux AMD64..."
+	VERSION=1.0.0 PLATFORMS="linux-amd64" ./scripts/build-release.sh
+
+build-linux-arm64:
+	@echo "Building for Linux ARM64..."
+	VERSION=1.0.0 PLATFORMS="linux-arm64" ./scripts/build-release.sh
+
 # Deploy complete cluster
 deploy-cluster:
 	@echo "Deploying complete SD-WAN cluster..."
@@ -197,6 +211,11 @@ help:
 	@echo "  format       - Format code"
 	@echo "  lint         - Lint code"
 	@echo "  security     - Security scan"
+	@echo ""
+	@echo "Release Building:"
+	@echo "  build-release   - Build all release packages"
+	@echo "  build-linux-amd64 - Build for Linux AMD64"
+	@echo "  build-linux-arm64 - Build for Linux ARM64"
 	@echo ""
 	@echo "Cluster Management:"
 	@echo "  cluster-status  - Show cluster status"
