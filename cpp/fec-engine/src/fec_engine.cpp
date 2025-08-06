@@ -87,7 +87,7 @@ double FecEngine::get_recovery_probability() const {
 // Reed-Solomon implementation
 class ReedSolomonFec::Impl {
 public:
-    ReedSolomonFec::Impl(uint32_t data_shards, uint32_t parity_shards) 
+    Impl(uint32_t data_shards, uint32_t parity_shards) 
         : data_shards_(data_shards), parity_shards_(parity_shards) {
         // TODO: Initialize Reed-Solomon library
     }
