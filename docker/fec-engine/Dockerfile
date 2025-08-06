@@ -1,4 +1,4 @@
-FROM gcc:11-slim AS builder
+FROM gcc:12-slim AS builder
 
 WORKDIR /app
 
