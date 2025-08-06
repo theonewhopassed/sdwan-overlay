@@ -103,8 +103,6 @@ services:
       context: .
       dockerfile: docker/underlay-manager/Dockerfile
     container_name: sdwan-underlay-manager
-    ports:
-      - "9093:9093"
     environment:
       - GRPC_PORT=9093
       - LOG_LEVEL=info
@@ -122,7 +120,7 @@ services:
       dockerfile: docker/packet-scheduler/Dockerfile
     container_name: sdwan-packet-scheduler
     environment:
-      - UNDERLAY_MANAGER_ENDPOINT=http://underlay-manager:9093
+      - UNDERLAY_MANAGER_ENDPOINT=http://localhost:9093
       - LOG_LEVEL=info
     depends_on:
       - underlay-manager
