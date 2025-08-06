@@ -1,9 +1,13 @@
-FROM gcc:11-alpine AS builder
+FROM gcc:11-slim AS builder
 
 WORKDIR /app
 
 # Install build dependencies
-RUN apk add --no-cache make
+RUN apt-get update && apt-get install -y \
+    make \
+    cmake \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy source code
 COPY cpp/fec-engine ./fec-engine
@@ -13,9 +17,11 @@ WORKDIR /app/fec-engine
 RUN make clean && make
 
 # Final stage
-FROM alpine:latest
+FROM debian:bullseye-slim
 
-RUN apk --no-cache add ca-certificates
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root/
 
