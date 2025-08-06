@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install -y \
 
 # Copy Cargo files
 COPY rust/underlay-manager/Cargo.toml ./Cargo.toml
-COPY rust/underlay-manager/Cargo.lock ./Cargo.lock
 
 # Create dummy main.rs to build dependencies
 RUN mkdir src && echo "fn main() {}" > src/main.rs
