@@ -6,6 +6,7 @@
 #include <chrono>
 #include <unordered_map>
 #include <queue>
+#include <optional>
 
 namespace sdwan {
 
