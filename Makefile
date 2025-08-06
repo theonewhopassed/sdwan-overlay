@@ -22,7 +22,6 @@ build-cpp:
 build-go:
 	@echo "Building Go components..."
 	go build -o bin/controller ./cmd/controller
-	go build -o bin/device-agent ./cmd/device-agent
 
 # Build Python components
 build-python:
