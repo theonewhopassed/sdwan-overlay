@@ -1,10 +1,9 @@
-FROM rust:1.70-alpine AS builder
+FROM rust:1.75-alpine AS builder
 
 WORKDIR /app
 
 # Copy Cargo files
 COPY rust/packet-scheduler/Cargo.toml ./Cargo.toml
-COPY rust/packet-scheduler/Cargo.lock ./Cargo.lock
 
 # Create a dummy main.rs to build dependencies
 RUN mkdir src && echo "fn main() {}" > src/main.rs
