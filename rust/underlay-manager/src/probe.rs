@@ -3,7 +3,8 @@ use anyhow::Result;
 use async_trait::async_trait;
 use std::collections::HashMap;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
-use std::time::{Duration, Instant};
+use std::time::Duration;
+use chrono::{DateTime, Utc};
 use tokio::net::UdpSocket;
 use tokio::time::timeout;
 use tracing::{debug, error, info, warn};
@@ -37,7 +38,7 @@ impl NetworkProbe {
             metrics.bandwidth_mbps = bandwidth;
         }
         
-        metrics.timestamp = Instant::now();
+        metrics.timestamp = Utc::now();
         Ok(metrics)
     }
 
@@ -63,7 +64,7 @@ impl NetworkProbe {
             let start = Instant::now();
             
             // Simulate UDP probe
-            tokio::time::sleep(Duration::from_millis(5 + (i % 3))).await;
+            tokio::time::sleep(Duration::from_millis(5 + (i % 3) as u64)).await;
             
             let latency = start.elapsed().as_millis() as f64;
             latencies.push(latency);
@@ -91,7 +92,7 @@ impl NetworkProbe {
         // TODO: Implement actual bandwidth measurement
         tokio::time::sleep(Duration::from_millis(100)).await;
         
-        let duration = start.elapsed().as_millis() as f64;
+        let _duration = start.elapsed().as_millis() as f64;
         let bandwidth = 100.0 + (interface_name.len() as f64 * 10.0); // Simulated bandwidth
         
         debug!("Bandwidth probe for {}: {} Mbps", interface_name, bandwidth);
@@ -122,9 +123,11 @@ impl NetworkProbe {
             
             match self.probe_interface(&interface.name).await {
                 Ok(metric) => {
+                    let latency = metric.latency_ms;
+                    let bandwidth = metric.bandwidth_mbps;
                     metrics.insert(interface.name.clone(), metric);
                     info!("Probed interface {}: latency={}ms, bandwidth={}Mbps", 
-                          interface.name, metric.latency_ms, metric.bandwidth_mbps);
+                          interface.name, latency, bandwidth);
                 }
                 Err(e) => {
                     error!("Failed to probe interface {}: {}", interface.name, e);
