@@ -35,4 +35,5 @@ COPY config/fec-engine ./config
 
 EXPOSE 9095
 
-CMD ["./fec-engine"] 
+# Run in daemon mode
+CMD ["./fec-engine", "--daemon"] 

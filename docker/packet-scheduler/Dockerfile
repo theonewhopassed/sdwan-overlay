@@ -10,8 +10,9 @@ RUN apt-get update && apt-get install -y \
 
 # Copy Cargo files
 COPY rust/packet-scheduler/Cargo.toml ./Cargo.toml
+COPY rust/packet-scheduler/Cargo.lock ./Cargo.lock
 
-# Create a dummy main.rs to build dependencies
+# Create dummy main.rs to build dependencies
 RUN mkdir src && echo "fn main() {}" > src/main.rs
 RUN cargo build --release
 RUN rm -rf src
@@ -19,8 +20,8 @@ RUN rm -rf src
 # Copy source code
 COPY rust/packet-scheduler/src ./src
 
-# Build the application
-RUN cargo build --release
+# Build the application with static linking
+RUN cargo build --release --target x86_64-unknown-linux-gnu
 
 # Final stage
 FROM debian:bullseye-slim
@@ -32,7 +33,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /root/
 
 # Copy the binary from builder stage
-COPY --from=builder /app/target/release/packet-scheduler .
+COPY --from=builder /app/target/x86_64-unknown-linux-gnu/release/packet-scheduler .
 
 # Copy configuration files
 COPY config/packet-scheduler ./config

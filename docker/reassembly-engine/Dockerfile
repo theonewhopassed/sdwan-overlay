@@ -35,4 +35,5 @@ COPY config/reassembly-engine ./config
 
 EXPOSE 9096
 
-CMD ["./reassembly-engine"] 
+# Run in daemon mode
+CMD ["./reassembly-engine", "--daemon"] 

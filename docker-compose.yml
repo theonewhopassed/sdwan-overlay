@@ -103,11 +103,12 @@ services:
       context: .
       dockerfile: docker/underlay-manager/Dockerfile
     container_name: sdwan-underlay-manager
+    ports:
+      - "9093:9093"
     environment:
       - GRPC_PORT=9093
       - LOG_LEVEL=info
       - INTERFACES=eth0,eth1
-    network_mode: host
     cap_add:
       - NET_ADMIN
       - NET_RAW
@@ -120,11 +121,10 @@ services:
       dockerfile: docker/packet-scheduler/Dockerfile
     container_name: sdwan-packet-scheduler
     environment:
-      - UNDERLAY_MANAGER_ENDPOINT=http://localhost:9093
+      - UNDERLAY_MANAGER_ENDPOINT=http://underlay-manager:9093
       - LOG_LEVEL=info
     depends_on:
       - underlay-manager
-    network_mode: host
     cap_add:
       - NET_ADMIN
       - NET_RAW
@@ -140,7 +140,6 @@ services:
       - LOG_LEVEL=info
       - FEC_TYPE=reed-solomon
       - REDUNDANCY_LEVEL=2
-    network_mode: host
     restart: unless-stopped
 
   # Reassembly Engine (C++)
@@ -153,7 +152,6 @@ services:
       - LOG_LEVEL=info
       - JITTER_BUFFER_SIZE=1000
       - TUN_INTERFACE=sdwan0
-    network_mode: host
     cap_add:
       - NET_ADMIN
       - NET_RAW
