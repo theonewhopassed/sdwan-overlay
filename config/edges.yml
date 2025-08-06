@@ -1,0 +1,75 @@
+# SD-WAN Edge Devices Configuration
+# This file defines edge devices for bulk deployment
+
+# Central controller IP address
+controller_ip: 192.168.1.100
+
+# Edge devices configuration
+edges:
+  # Branch Office 1
+  - id: edge-01
+    hostname: edge-01.example.com
+    site_id: branch-office-1
+    interfaces: eth0,eth1
+    prometheus_port: 9092
+    log_level: info
+    description: "Main branch office with dual WAN"
+
+  # Branch Office 2  
+  - id: edge-02
+    hostname: edge-02.example.com
+    site_id: branch-office-2
+    interfaces: eth0,eth1,wlan0
+    prometheus_port: 9093
+    log_level: info
+    description: "Secondary branch with wireless backup"
+
+  # Remote Site 1
+  - id: edge-03
+    hostname: edge-03.example.com
+    site_id: remote-site-1
+    interfaces: eth0
+    prometheus_port: 9094
+    log_level: warn
+    description: "Small remote site with single connection"
+
+  # Remote Site 2
+  - id: edge-04
+    hostname: edge-04.example.com
+    site_id: remote-site-2
+    interfaces: eth0,eth1
+    prometheus_port: 9095
+    log_level: info
+    description: "Remote site with dual connections"
+
+  # Mobile Site
+  - id: edge-05
+    hostname: edge-05.example.com
+    site_id: mobile-site
+    interfaces: eth0,wlan0,wwan0
+    prometheus_port: 9096
+    log_level: debug
+    description: "Mobile site with multiple connection types"
+
+# Deployment settings
+deployment:
+  mode: docker
+  docker_registry: ""
+  pull_images: true
+  health_check_timeout: 300
+  retry_attempts: 3
+
+# Network settings
+network:
+  tun_interface_prefix: sdwan
+  default_gateway: 10.0.0.1
+  subnet_mask: 255.255.255.0
+  mtu: 1500
+
+# Monitoring settings
+monitoring:
+  metrics_interval: 30s
+  health_check_interval: 60s
+  alert_threshold_latency: 100ms
+  alert_threshold_packet_loss: 0.05
+  alert_threshold_bandwidth: 0.8 

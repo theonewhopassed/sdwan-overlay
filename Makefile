@@ -86,6 +86,44 @@ deploy-edge:
 	@echo "Deploying edge device..."
 	./scripts/deploy-edge.sh $(ARGS)
 
+# Deploy multiple edge devices
+deploy-bulk:
+	@echo "Deploying multiple edge devices..."
+	./scripts/deploy-bulk.sh config/edges.yml
+
+# Deploy complete cluster
+deploy-cluster:
+	@echo "Deploying complete SD-WAN cluster..."
+	./scripts/manage-cluster.sh status
+
+# Cluster management targets
+cluster-status:
+	@./scripts/manage-cluster.sh status
+
+cluster-health:
+	@./scripts/manage-cluster.sh health
+
+cluster-logs:
+	@./scripts/manage-cluster.sh logs
+
+cluster-restart:
+	@./scripts/manage-cluster.sh restart
+
+cluster-backup:
+	@./scripts/manage-cluster.sh backup
+
+cluster-restore:
+	@./scripts/manage-cluster.sh restore
+
+cluster-update:
+	@./scripts/manage-cluster.sh update
+
+cluster-monitor:
+	@./scripts/manage-cluster.sh monitor
+
+cluster-test:
+	@./scripts/manage-cluster.sh test
+
 # Setup environment
 setup:
 	@echo "Setting up development environment..."
@@ -150,6 +188,8 @@ help:
 	@echo "  start        - Start the system"
 	@echo "  stop         - Stop the system"
 	@echo "  deploy-edge  - Deploy edge device"
+	@echo "  deploy-bulk  - Deploy multiple edge devices"
+	@echo "  deploy-cluster - Deploy complete cluster"
 	@echo "  setup        - Setup environment"
 	@echo "  clean        - Clean build artifacts"
 	@echo "  install-deps - Install dependencies"
@@ -157,4 +197,15 @@ help:
 	@echo "  format       - Format code"
 	@echo "  lint         - Lint code"
 	@echo "  security     - Security scan"
-	@echo "  help         - Show this help" 
+	@echo ""
+	@echo "Cluster Management:"
+	@echo "  cluster-status  - Show cluster status"
+	@echo "  cluster-health  - Check cluster health"
+	@echo "  cluster-logs    - View cluster logs"
+	@echo "  cluster-restart - Restart cluster services"
+	@echo "  cluster-backup  - Create cluster backup"
+	@echo "  cluster-restore - Restore from backup"
+	@echo "  cluster-update  - Update cluster components"
+	@echo "  cluster-monitor - Open monitoring dashboard"
+	@echo "  cluster-test    - Run connectivity tests"
+	@echo "  help           - Show this help" 
