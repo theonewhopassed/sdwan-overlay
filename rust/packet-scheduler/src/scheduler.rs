@@ -153,7 +153,7 @@ impl PacketScheduler {
     }
     
     pub async fn run(&mut self) -> Result<()> {
-        info!("Starting packet scheduler");
+        info!("Starting packet scheduler with algorithm: {}", self.config.scheduler.algorithm);
         
         let mut current_metrics = HashMap::new();
         
