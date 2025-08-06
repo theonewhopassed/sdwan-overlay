@@ -1,0 +1,43 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # SD-WAN Controller
+  - job_name: 'sdwan-controller'
+    static_configs:
+      - targets: ['localhost:9091']
+    scrape_interval: 10s
+
+  # SD-WAN Device Agent
+  - job_name: 'sdwan-device-agent'
+    static_configs:
+      - targets: ['localhost:9092']
+    scrape_interval: 10s
+
+  # SD-WAN Underlay Manager
+  - job_name: 'sdwan-underlay-manager'
+    static_configs:
+      - targets: ['localhost:9093']
+    scrape_interval: 10s
+
+  # Node Exporter (if available)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['localhost:9100']
+
+  # System metrics
+  - job_name: 'system'
+    static_configs:
+      - targets: ['localhost:9090']
+    metrics_path: '/metrics'
+    scrape_interval: 30s 

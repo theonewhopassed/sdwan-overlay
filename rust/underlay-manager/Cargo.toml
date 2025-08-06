@@ -1,0 +1,40 @@
+[package]
+name = "underlay-manager"
+version = "0.1.0"
+edition = "2021"
+authors = ["SD-WAN Team"]
+description = "Underlay network monitoring and metrics collection"
+
+[dependencies]
+tokio = { version = "1.28", features = ["full"] }
+tonic = "0.10"
+prost = "0.12"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+clap = { version = "4.3", features = ["derive"] }
+anyhow = "1.0"
+thiserror = "1.0"
+async-trait = "0.1"
+futures = "0.3"
+crossbeam-channel = "0.5"
+parking_lot = "0.12"
+dashmap = "5.4"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.4", features = ["v4", "serde"] }
+pnet = "0.34"
+libpnet = "0.33"
+
+[dev-dependencies]
+tokio-test = "0.4"
+criterion = "0.5"
+
+[[bench]]
+name = "probe_benchmarks"
+harness = false
+
+[features]
+default = []
+dpdk = []
+epoll = [] 

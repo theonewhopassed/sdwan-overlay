@@ -1,0 +1,169 @@
+version: '3.8'
+
+services:
+  # Etcd for configuration storage
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.0
+    container_name: sdwan-etcd
+    environment:
+      ETCD_NAME: sdwan-etcd
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+      ETCD_ADVERTISE_CLIENT_URLS: http://etcd:2379
+      ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://etcd:2380
+      ETCD_INITIAL_CLUSTER: sdwan-etcd=http://etcd:2380
+      ETCD_INITIAL_CLUSTER_STATE: new
+      ETCD_INITIAL_CLUSTER_TOKEN: sdwan-cluster
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+    volumes:
+      - etcd_data:/etcd-data
+    command: etcd -data-dir=/etcd-data
+    restart: unless-stopped
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: sdwan-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:9.5.0
+    container_name: sdwan-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
+    restart: unless-stopped
+
+  # Management Controller (Go)
+  controller:
+    build:
+      context: .
+      dockerfile: docker/controller/Dockerfile
+    container_name: sdwan-controller
+    ports:
+      - "8080:8080"
+      - "9091:9091"
+    environment:
+      - ETCD_ENDPOINTS=http://etcd:2379
+      - PROMETHEUS_ENDPOINT=http://prometheus:9090
+      - LOG_LEVEL=info
+    depends_on:
+      - etcd
+      - prometheus
+    volumes:
+      - ./config/controller:/app/config
+    restart: unless-stopped
+
+  # Device Agent (Python)
+  device-agent:
+    build:
+      context: .
+      dockerfile: docker/device-agent/Dockerfile
+    container_name: sdwan-device-agent
+    ports:
+      - "9092:9092"
+    environment:
+      - CONTROLLER_ENDPOINT=http://controller:8080
+      - ETCD_ENDPOINTS=http://etcd:2379
+      - SITE_ID=site-a
+      - LOG_LEVEL=info
+    depends_on:
+      - controller
+      - etcd
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config/device-agent:/app/config
+    restart: unless-stopped
+
+  # Underlay Manager (Rust)
+  underlay-manager:
+    build:
+      context: .
+      dockerfile: docker/underlay-manager/Dockerfile
+    container_name: sdwan-underlay-manager
+    ports:
+      - "9093:9093"
+    environment:
+      - GRPC_PORT=9093
+      - LOG_LEVEL=info
+      - INTERFACES=eth0,eth1
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    restart: unless-stopped
+
+  # Packet Scheduler (Rust)
+  packet-scheduler:
+    build:
+      context: .
+      dockerfile: docker/packet-scheduler/Dockerfile
+    container_name: sdwan-packet-scheduler
+    environment:
+      - UNDERLAY_MANAGER_ENDPOINT=http://underlay-manager:9093
+      - LOG_LEVEL=info
+    depends_on:
+      - underlay-manager
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    restart: unless-stopped
+
+  # FEC Engine (C++)
+  fec-engine:
+    build:
+      context: .
+      dockerfile: docker/fec-engine/Dockerfile
+    container_name: sdwan-fec-engine
+    environment:
+      - LOG_LEVEL=info
+      - FEC_TYPE=reed-solomon
+      - REDUNDANCY_LEVEL=2
+    network_mode: host
+    restart: unless-stopped
+
+  # Reassembly Engine (C++)
+  reassembly-engine:
+    build:
+      context: .
+      dockerfile: docker/reassembly-engine/Dockerfile
+    container_name: sdwan-reassembly-engine
+    environment:
+      - LOG_LEVEL=info
+      - JITTER_BUFFER_SIZE=1000
+      - TUN_INTERFACE=sdwan0
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    restart: unless-stopped
+
+volumes:
+  etcd_data:
+  prometheus_data:
+  grafana_data: 
