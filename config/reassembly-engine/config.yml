@@ -1,0 +1,11 @@
+max_buffer_size: 1048576
+max_packet_age_ms: 5000
+jitter_buffer_size: 1000
+enable_reordering: true
+enable_jitter_buffering: true
+tun_interface: "sdwan0"
+tap_interface: "sdwan1"
+
+logging:
+  level: "info"
+  format: "json" 

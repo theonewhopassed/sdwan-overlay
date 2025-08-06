@@ -1,0 +1,11 @@
+fec_type: "reed_solomon"
+redundancy_level: 2
+block_size: 255
+data_symbols: 223
+parity_symbols: 32
+max_packet_size: 1500
+buffer_size: 10000
+
+logging:
+  level: "info"
+  format: "json" 

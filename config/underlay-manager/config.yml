@@ -1,0 +1,17 @@
+interfaces:
+  - "eth0"
+  - "eth1"
+
+probes:
+  icmp_interval: 1000
+  udp_interval: 2000
+  bandwidth_interval: 5000
+  timeout: 5000
+
+server:
+  port: 9093
+  host: "0.0.0.0"
+
+logging:
+  level: "info"
+  format: "json" 

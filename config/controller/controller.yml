@@ -1,0 +1,22 @@
+server:
+  port: 8080
+  host: "0.0.0.0"
+  read_timeout: 30
+  write_timeout: 30
+
+etcd:
+  endpoints:
+    - "http://localhost:2379"
+  dial_timeout: 5
+  username: ""
+  password: ""
+
+logging:
+  level: "info"
+  format: "json"
+  output: "stdout"
+
+security:
+  tls_enabled: false
+  cert_file: ""
+  key_file: "" 

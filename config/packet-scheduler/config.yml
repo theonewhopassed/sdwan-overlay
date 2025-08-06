@@ -1,0 +1,40 @@
+scheduler:
+  algorithm: "weighted_round_robin"
+  interval: 100
+  max_packets_per_batch: 1000
+
+qos_rules:
+  - name: "voice"
+    match:
+      protocol: "udp"
+      port_range: "10000-20000"
+      dscp: 46
+    action:
+      priority: 1
+      link_preference: "lowest_latency"
+      bandwidth_limit: 1000000
+
+  - name: "video"
+    match:
+      protocol: "udp"
+      port_range: "20000-30000"
+      dscp: 34
+    action:
+      priority: 2
+      link_preference: "highest_bandwidth"
+      bandwidth_limit: 5000000
+
+links:
+  - name: "primary"
+    weight: 70
+    failover_threshold: 100
+    health_check_interval: 1000
+
+  - name: "secondary"
+    weight: 30
+    failover_threshold: 100
+    health_check_interval: 1000
+
+logging:
+  level: "info"
+  format: "json" 
